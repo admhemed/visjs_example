@@ -22,6 +22,32 @@
             overflow:hidden;
             display:none;
         }
+        dl {
+            width:200px;
+            display: block;
+        }
+        dt {
+            font-weight: bold;
+            clear: left;
+            text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            float:left;
+            width: 100px;
+        }
+        dd {
+            margin-left:100px;
+            text-align: left;
+            display:block;
+            width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        dt:nth-of-type(odd),dd:nth-of-type(odd){
+            background-color: lightgrey !important;
+        }
 
         div.vis-network div.vis-navigation div.vis-button {
             width: 29px;
@@ -68,7 +94,8 @@
 <script type="text/javascript">
     var container = document.getElementById('myvisjs');
     var options = {};
-    // create an array with nodes
+
+
     var nodes = [
         {id: 0, hidden:false, label: "root"},
         {id: 1, hidden:true, label: 'Relationship Manager', /*color:'red',*/ shape: 'ellipse'},
@@ -103,9 +130,21 @@
     ];
     var nodeIndex = {};
     nodes.forEach(function(n){
-         nodeIndex[n.id] = n;
+        n.properties =  getProperties();
+        var title = "<dl>";
+        for (prop in n.properties){
+            title += "<dt>";
+            title += prop;
+            title += "</dt>";
+            title += "<dd>";
+            title += n.properties[prop];
+            title += "</dd>";
+        }
+        title += "</dl>";
+        n.title = title;
+        nodeIndex[n.id] = n;
     });
-
+    console.log(nodes);
     var nodeSet = new vis.DataSet(nodes);
 
     // create an array with edges
@@ -156,7 +195,7 @@
             forceAtlas2Based: {
                 springLength: 150,
                 springConstant: 0.945,
-                avoidOverlap:0.3
+                avoidOverlap:0.5
             },
             maxVelocity: 100,
             minVelocity: 3
@@ -182,7 +221,7 @@
     };
     var network = new vis.Network(container, data, options);
     var nodesStatus = {};
-    network.on("click",function (params){
+    network.on("doubleClick",function (params){
         var id = params.nodes[0];
         if (id === undefined){
             return;
@@ -209,6 +248,17 @@
                 collapse(data.edges,edge);
             });
         }
+
+        network.fit({
+            offset: {x:0, y:0},
+            position: {x:0, y:0},
+            scale:1,
+            animation: {
+                duration: 500,
+                easingFunction: "linear"
+            }
+        });
+
         function collapse(itemSet,item){
             var parent = item.group;
             var parents = [];
@@ -226,18 +276,25 @@
                 }
             }
         }
-
-
-        network.fit({
-            offset: {x:0, y:0},
-            position: {x:0, y:0},
-            scale:1,
-            animation: {
-                duration: 500,
-                easingFunction: "linear"
-            }
-        });
     });
+    function getProperties(){
+        var source = {
+            Country : ["UK","Germany","France","USA","Japan"],
+            Gender : ["Male", "Female"],
+            "Job title":["Relationship Manager", "Accountant", "Solicitor", "MD Doctor", "Public Relations"],
+            "Marital status":["Married","Single","Engaged"],
+            "Net Worth Category":["high","normal","low"]
+        };
+        var properties = {};
+        for (var prop in source) {
+            var i = Math.round(Math.random() * source[prop].length);
+            if (i < source[prop].length) {
+                properties[prop] = source[prop][i];
+            }
+        }
+        return properties;
+    }
+
 </script>
 </body>
 </html>
