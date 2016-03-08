@@ -137,7 +137,8 @@
         {id:26, from: 28, to: 27, hidden:true, shadow:{color:'rgb(0,255,0)'}},
         {id:27, from: 28, to: 29, hidden:true},
         {id:28, from: 0, to: 28, hidden:true},
-        {id:29, from: 5, to: 0, hidden:true}
+        {id:29, from: 5, to: 0, hidden:true},
+        {id:30, from: 19, to: 7, hidden:true}
     ]);
 
     // create a network
@@ -191,9 +192,7 @@
 
                     var foundNodes = data.nodes.get({filter:function(n){return n.id === edge.to}});
                     if (foundNodes[0]) {
-                        if (nodeIndex[foundNodes[0].id].expanded){
-                            data.nodes.update({id: foundNodes[0].id, hidden: false});
-                        } else {
+                        if (!nodeIndex[foundNodes[0].id].expanded && foundNodes[0].hidden){
                             data.nodes.update({id: foundNodes[0].id, hidden: false, group:id});
                         }
                     }
