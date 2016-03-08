@@ -5,7 +5,6 @@
     <meta charset="utf-8" />
     <title>graph example</title>
     <script src="/vis/vis.min.js"></script>
-    <script src="/vis/lodash.js"></script>
     <link href="/vis/vis.min.css" rel="stylesheet" type="text/css" />
     <style type="text/css">
         body, html { font-family: sans-serif; }
@@ -102,7 +101,10 @@
         {id: 28, hidden:true, label: "28"},
         {id: 29, hidden:true, label: "29"}
     ];
-    var nodeIndex = _.keyBy(nodes,'id');
+    var nodeIndex = {};
+    nodes.forEach(function(n){
+         nodeIndex[n.id] = n;
+    });
 
     var nodeSet = new vis.DataSet(nodes);
 
@@ -137,8 +139,8 @@
         {id:26, from: 28, to: 27, hidden:true, shadow:{color:'rgb(0,255,0)'}},
         {id:27, from: 28, to: 29, hidden:true},
         {id:28, from: 0, to: 28, hidden:true},
-        {id:29, from: 5, to: 0, hidden:true},
-        {id:30, from: 19, to: 7, hidden:true}
+        {id:29, from: 5, to: 0, hidden:true,arrows:'to'},
+        {id:30, from: 19, to: 7, hidden:true,arrows:'to'}
     ]);
 
     // create a network
@@ -214,7 +216,7 @@
                 parents.push(parent);
                 if (parent === id){
                     itemSet.update({id:item.id, hidden :true});
-                    _.each(parents,function(p){nodeIndex[p].expanded = false});
+                    parents.forEach(function(p){nodeIndex[p].expanded = false});
                 }
                 var foundNodes = data.nodes.get({filter:function(n){return n.id === parent}});
                 if (foundNodes[0]) {
